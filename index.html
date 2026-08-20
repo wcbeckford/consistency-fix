@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Consistency Fix™ — WillKnowsFitness</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF5C00;
+    --orange-dim: #cc4900;
+    --black: #0a0a0a;
+    --dark: #111111;
+    --card: #181818;
+    --border: #2a2a2a;
+    --white: #f5f5f5;
+    --muted: #888;
+    --green: #39d46a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: #ffffff;
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,10,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    color: var(--orange);
+  }
+  .nav-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .hero {
+    padding: 100px 20px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: var(--black);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,92,0,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,92,0,0.15);
+    border: 1px solid rgba(255,92,0,0.4);
+    color: var(--orange);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 22vw, 140px);
+    line-height: 0.9;
+    letter-spacing: 4px;
+    margin-bottom: 12px;
+    color: #ffffff;
+    text-shadow: none;
+  }
+  .hero h1 span { color: var(--orange); }
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 300px;
+    margin: 0 auto 24px;
+    line-height: 1.6;
+  }
+  .hero-promise {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    border-radius: 10px;
+    padding: 14px 18px;
+    max-width: 380px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .hero-promise-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--orange);
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+  }
+  .hero-promise p { font-size: 14px; font-weight: 600; line-height: 1.4; }
+
+  .section { padding: 0 20px 50px; max-width: 440px; margin: 0 auto; background: var(--black); }
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--orange);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+    line-height: 1;
+    color: #ffffff;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .card-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .progress-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .progress-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-title { font-weight: 600; font-size: 14px; }
+  .progress-pct { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--orange); }
+  .progress-bar-bg { background: var(--dark); border-radius: 6px; height: 8px; overflow: hidden; }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--orange-dim), var(--orange));
+    border-radius: 6px;
+    transition: width 0.4s ease;
+  }
+
+  .win-banner {
+    display: none;
+    background: linear-gradient(135deg, #003a15, #001a09);
+    border: 1px solid var(--green);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .win-banner.show { display: block; }
+  .win-banner .win-emoji { font-size: 28px; margin-bottom: 6px; }
+  .win-banner .win-text { font-weight: 700; color: var(--green); font-size: 15px; }
+  .win-banner .win-sub { font-size: 12px; color: #5a9a6a; margin-top: 4px; }
+
+  .floor-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 16px; }
+  .floor-tier {
+    border-radius: 10px; padding: 14px 10px; text-align: center;
+    cursor: pointer; transition: transform 0.15s; position: relative;
+  }
+  .floor-tier:active { transform: scale(0.97); }
+  .floor-tier.tier-full { background: var(--orange); }
+  .floor-tier.tier-mid { background: #3a1a00; border: 1px solid var(--orange-dim); }
+  .floor-tier.tier-min { background: #1e1e1e; border: 1px solid var(--border); }
+  .floor-tier.active-tier { outline: 2px solid var(--orange); outline-offset: 2px; }
+  .tier-time { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
+  .tier-label { font-size: 11px; opacity: 0.8; margin-top: 3px; }
+  .tier-tag { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 1px; opacity: 0.7; margin-top: 5px; }
+
+  .mode-toggle { display: flex; gap: 6px; margin-bottom: 14px; }
+  .mode-btn {
+    flex: 1; padding: 10px 6px;
+    background: var(--dark); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--muted);
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    cursor: pointer; text-align: center; transition: all 0.2s;
+  }
+  .mode-btn.active { background: var(--card); border-color: var(--orange); color: var(--white); }
+  .mode-btn.active.gym { border-color: var(--orange); }
+  .mode-btn.active.bw { border-color: var(--green); color: var(--green); background: rgba(57,212,106,0.08); }
+
+  .day-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .day-tab {
+    flex: 1; padding: 10px 6px;
+    background: var(--dark); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--muted);
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    cursor: pointer; text-align: center; transition: all 0.2s;
+  }
+  .day-tab.active { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+  .duration-selector { display: flex; gap: 6px; margin-bottom: 14px; }
+  .dur-btn {
+    flex: 1; padding: 8px;
+    background: var(--dark); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--muted);
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    cursor: pointer; text-align: center; transition: all 0.2s;
+  }
+  .dur-btn.active { background: rgba(255,92,0,0.15); border-color: var(--orange); color: var(--orange); }
+
+  .ex-cue {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 3px;
+    margin-bottom: 4px;
+  }
+  .ex-demo-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--orange);
+    margin-top: 3px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+  .ex-demo-btn:active { opacity: 0.7; }
+
+  #ex-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #ex-modal.open { display: flex; }
+  .modal-inner {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 420px;
+    overflow: hidden;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--white);
+  }
+  .modal-close {
+    font-size: 22px;
+    color: var(--muted);
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  .modal-video-wrap {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+  }
+  .modal-video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  .modal-cue {
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #ccc;
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+  }
+  .modal-cue strong { color: var(--orange); }
+
+  .exercise-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .exercise-row .ex-left { width: 100%; display: flex; align-items: flex-start; gap: 12px; }
+  .exercise-row .ex-sets { align-self: flex-start; margin-left: 34px; }
+
+  .exercise-row {
+    display: flex;
+    background: var(--dark);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .exercise-row {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--dark); border-radius: 8px;
+    padding: 12px 14px; border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .exercise-row.done { border-color: var(--green); opacity: 0.6; }
+  .exercise-row.done .ex-name { text-decoration: line-through; }
+  .ex-left { display: flex; align-items: center; gap: 12px; }
+  .ex-check {
+    width: 22px; height: 22px; border: 2px solid var(--border);
+    border-radius: 6px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s; flex-shrink: 0; color: transparent;
+  }
+  .exercise-row.done .ex-check { background: var(--green); border-color: var(--green); color: #fff; }
+  .ex-name { font-size: 14px; font-weight: 500; }
+  .ex-sets { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--orange); }
+
+  .workout-done-tag {
+    display: none; margin-top: 12px;
+    background: rgba(57,212,106,0.1); border: 1px solid rgba(57,212,106,0.3);
+    border-radius: 8px; padding: 10px 14px;
+    font-family: 'Space Mono', monospace; font-size: 11px; color: var(--green);
+    text-align: center;
+  }
+
+  .rule-card {
+    background: linear-gradient(135deg, #1a0d00, #111);
+    border: 1px solid var(--orange-dim);
+    border-radius: 14px; padding: 22px 20px; margin-bottom: 12px;
+  }
+  .rule-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px; color: var(--orange); letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .rule-items { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+  .rule-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.4; }
+  .rule-arrow { color: var(--orange); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .rule-if { color: var(--muted); font-size: 11px; margin-bottom: 2px; font-family: 'Space Mono', monospace; letter-spacing: 0.5px; }
+  .rule-then { font-weight: 600; }
+
+  .checklist { display: flex; flex-direction: column; gap: 10px; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    background: var(--dark); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; cursor: pointer; transition: border-color 0.2s;
+  }
+  .check-item.checked { border-color: var(--green); }
+  .check-circle {
+    width: 22px; height: 22px; border: 2px solid var(--border);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: all 0.2s; margin-top: 1px;
+    font-size: 12px; color: transparent;
+  }
+  .check-item.checked .check-circle { background: var(--green); border-color: var(--green); color: #fff; }
+  .check-num { font-family: 'Bebas Neue', sans-serif; font-size: 16px; color: var(--orange); flex-shrink: 0; width: 20px; line-height: 1.3; }
+  .check-text { font-size: 14px; line-height: 1.4; font-weight: 500; }
+  .check-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+  .cta-block {
+    background: linear-gradient(135deg, #1a0800, #0f0f0f);
+    border: 1px solid var(--orange-dim);
+    border-radius: 16px; padding: 24px 20px; text-align: center; margin-top: 20px;
+  }
+  .cta-block h3 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 1px; margin-bottom: 8px; }
+  .cta-block p { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 16px; }
+  .cta-btn {
+    display: block; background: var(--orange); color: #fff;
+    font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px;
+    padding: 14px 20px; border-radius: 10px; border: none;
+    cursor: pointer; width: 100%; transition: background 0.2s;
+  }
+  .cta-btn:hover { background: var(--orange-dim); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+
+<div id="ex-modal" onclick="if(event.target===this)closeDemo()">
+  <div class="modal-inner">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-close" onclick="closeDemo()">✕</div>
+    </div>
+    <div class="modal-video-wrap">
+      <iframe id="modal-video" src="" allowfullscreen allow="autoplay"></iframe>
+    </div>
+    <div class="modal-cue" id="modal-cue"></div>
+  </div>
+</div>
+  <div class="nav-logo">THE CONSISTENCY FIX™</div>
+  <div class="nav-tag">@WILLKNOWSFITNESS</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge">YOUR PROGRAM — START HERE</div>
+  <h1>NEVER<br><span>MISS</span><br>AGAIN</h1>
+  <p class="hero-sub">Stop restarting. Stop falling off. This fixes inconsistency — fast.</p>
+  <div class="hero-promise">
+    <div class="hero-promise-label">THE PROMISE</div>
+    <p>"Follow this and you will stop missing workouts immediately."</p>
+  </div>
+</div>
+
+<div class="section">
+
+  <div id="win-banner" class="win-banner">
+    <div class="win-emoji">🔥</div>
+    <div class="win-text">You're doing it. 3 days straight.</div>
+    <div class="win-sub">This is what consistency looks like.</div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-header">
+      <span class="progress-title">Week 1 Progress</span>
+      <span class="progress-pct" id="pct-display">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="section-label">MODULE 01</div>
+  <div class="section-title">THE FLOOR SYSTEM</div>
+
+  <div class="card">
+    <div class="card-title">YOUR MINIMUM IS STILL A WIN</div>
+    <div class="card-sub">No matter how busy life gets — there's always a version you can do. Pick your floor. Get it done.</div>
+    <div class="floor-grid">
+      <div class="floor-tier tier-full active-tier" id="tier-30" onclick="selectTier('30')">
+        <div class="tier-time">30</div>
+        <div class="tier-label">MIN</div>
+        <div class="tier-tag">OPTIMAL</div>
+      </div>
+      <div class="floor-tier tier-mid" id="tier-20" onclick="selectTier('20')">
+        <div class="tier-time">20</div>
+        <div class="tier-label">MIN</div>
+        <div class="tier-tag">SOLID</div>
+      </div>
+      <div class="floor-tier tier-min" id="tier-15" onclick="selectTier('15')">
+        <div class="tier-time">15</div>
+        <div class="tier-label">MIN</div>
+        <div class="tier-tag">FLOOR</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-label">MODULE 02</div>
+  <div class="section-title">3-DAY "NEVER MISS" PLAN</div>
+
+  <div class="mode-toggle">
+    <div class="mode-btn gym active" data-mode="gym" onclick="selectMode('gym')">🏋️ GYM / HOME GYM</div>
+    <div class="mode-btn bw" data-mode="bodyweight" onclick="selectMode('bodyweight')">💪 BODYWEIGHT ONLY</div>
+  </div>
+
+  <div class="day-tabs">
+    <div class="day-tab active" onclick="selectDay(1)">DAY 1</div>
+    <div class="day-tab" onclick="selectDay(2)">DAY 2</div>
+    <div class="day-tab" onclick="selectDay(3)">DAY 3</div>
+  </div>
+
+  <div class="duration-selector">
+    <div class="dur-btn active" onclick="selectDur(30)">30 MIN</div>
+    <div class="dur-btn" onclick="selectDur(20)">20 MIN</div>
+    <div class="dur-btn" onclick="selectDur(15)">15 MIN</div>
+  </div>
+
+  <div class="exercise-list" id="exercise-list"></div>
+  <div class="workout-done-tag" id="workout-done">✓ WORKOUT COMPLETE — NICE WORK.</div>
+
+  <hr class="divider">
+
+  <div class="section-label">MODULE 03</div>
+  <div class="section-title">THE NO RESTART RULE</div>
+
+  <div class="rule-card">
+    <h3>YOU DON'T RESTART.<br>YOU ADJUST.</h3>
+    <p style="font-size:13px; color:var(--muted); line-height:1.5;">Stop treating a missed workout like failure. It's not failure — it's a signal to scale down, not stop.</p>
+    <div class="rule-items">
+      <div class="rule-item">
+        <div class="rule-arrow">→</div>
+        <div>
+          <div class="rule-if">BUSY DAY?</div>
+          <div class="rule-then">Do the 15-min floor. Still counts. Still wins.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-arrow">→</div>
+        <div>
+          <div class="rule-if">MISSED YESTERDAY?</div>
+          <div class="rule-then">Don't double up. Just do today's workout.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-arrow">→</div>
+        <div>
+          <div class="rule-if">FEELING LIKE QUITTING?</div>
+          <div class="rule-then">That's the floor. 15 minutes. Non-negotiable.</div>
+        </div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-arrow">→</div>
+        <div>
+          <div class="rule-if">THE RULE:</div>
+          <div class="rule-then">You never miss twice. Adjust. Move forward.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-label">MODULE 04 — QUICK START</div>
+  <div class="section-title">DO THIS WEEK</div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-sub" style="font-size:14px; color:var(--white);">Simple. No overthinking. This is the only checklist that matters for the next 7 days.</div>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-circle">✓</div>
+      <div class="check-num">01</div>
+      <div>
+        <div class="check-text">Pick your time version right now</div>
+        <div class="check-sub">30, 20, or 15 min — be honest about your week</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-circle">✓</div>
+      <div class="check-num">02</div>
+      <div>
+        <div class="check-text">Schedule 3 workout slots in your calendar</div>
+        <div class="check-sub">Treat them like meetings. They don't move.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-circle">✓</div>
+      <div class="check-num">03</div>
+      <div>
+        <div class="check-text">Do Day 1 within 24 hours of reading this</div>
+        <div class="check-sub">Momentum is built on speed of action</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-circle">✓</div>
+      <div class="check-num">04</div>
+      <div>
+        <div class="check-text">Apply the No Restart Rule all week</div>
+        <div class="check-sub">Adjust, never quit. Scale down, never stop.</div>
+      </div>
+    </div>
+    <div class="check-item" onclick="toggleCheck(this)">
+      <div class="check-circle">✓</div>
+      <div class="check-num">05</div>
+      <div>
+        <div class="check-text">Complete all 3 workouts this week</div>
+        <div class="check-sub">That's the win. That's the whole thing.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-block" style="margin-top: 20px;">
+    <h3>READY FOR THE FULL SYSTEM?</h3>
+    <p>You've got consistency locked. Now let's build the body. Full programming, nutrition, and 1-on-1 coaching.</p>
+    <button class="cta-btn" onclick="window.open('https://instagram.com/willknowsfitness', '_blank')">DM "READY" ON INSTAGRAM →</button>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-label">MODULE 05 — NUTRITION ADD-ON</div>
+  <div class="section-title">THE SIMPLE FAT<br>LOSS EATING SYSTEM</div>
+
+  <div class="card" style="margin-bottom: 12px;">
+    <div class="card-sub" style="font-size:14px; color: var(--white); line-height: 1.6;">Stop overthinking food and stay consistent.</div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 1 — THE TRUTH</div>
+    <div class="rule-card" style="border-radius:12px;">
+      <h3 style="font-size:22px; margin-bottom:10px;">YOU DON'T NEED<br>A PERFECT DIET.</h3>
+      <p style="font-size:14px; color:#ccc; line-height:1.65;">You need something you can actually stick to.<br><br>
+      The problem isn't that you don't know what to eat. You do.<br><br>
+      <strong style="color:var(--white);">The problem is inconsistency.</strong> And inconsistency comes from systems that are too complicated to follow when life gets busy.</p>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 2 — THE RULE</div>
+    <div class="card" style="border-left: 3px solid var(--orange);">
+      <div class="card-title">EVERY MEAL.<br>SAME STRUCTURE.</div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+        <div style="display:flex; gap:10px; align-items:center; font-size:14px; color:#ccc;">
+          <span style="color:var(--green); flex-shrink:0;">✓</span> No calorie tracking required
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; font-size:14px; color:#ccc;">
+          <span style="color:var(--green); flex-shrink:0;">✓</span> No complicated planning
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; font-size:14px; color:#ccc;">
+          <span style="color:var(--green); flex-shrink:0;">✓</span> Just repeatable structure
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 3 — THE PLATE METHOD</div>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <div style="background:var(--card); border:1px solid var(--border); border-left:3px solid var(--orange); border-radius:12px; padding:16px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px; margin-bottom:6px;">1 — PROTEIN <span style="font-size:12px; color:var(--orange); font-family:'Space Mono',monospace;">(PRIORITY)</span></div>
+        <div style="font-size:13px; color:#aaa; line-height:1.6; margin-bottom:8px;">Chicken · Eggs · Beef · Fish · Protein shake</div>
+        <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--white); background:rgba(255,92,0,0.1); border:1px solid rgba(255,92,0,0.2); border-radius:6px; padding:6px 10px;">👊 AIM FOR A PALM-SIZED PORTION OR MORE</div>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-left:3px solid #888; border-radius:12px; padding:16px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px; margin-bottom:6px;">2 — CARBS <span style="font-size:12px; color:#aaa; font-family:'Space Mono',monospace;">(CONTROLLED)</span></div>
+        <div style="font-size:13px; color:#aaa; line-height:1.6; margin-bottom:8px;">Rice · Potatoes · Oats · Fruit</div>
+        <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--white); background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; padding:6px 10px;">✋ 1–2 HANDFULS</div>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-left:3px solid #555; border-radius:12px; padding:16px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px; margin-bottom:6px;">3 — FATS <span style="font-size:12px; color:#777; font-family:'Space Mono',monospace;">(MODERATE)</span></div>
+        <div style="font-size:13px; color:#aaa; line-height:1.6; margin-bottom:8px;">Nuts · Avocado · Oils</div>
+        <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--white); background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; padding:6px 10px;">🤏 SMALL PORTION</div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(135deg,#1a0800,#111); border:1px solid var(--orange-dim); border-radius:10px; padding:14px 16px; margin-top:10px; font-size:14px; font-weight:600; color:var(--white); text-align:center; line-height:1.5;">
+      That's it.<br><span style="color:var(--orange);">Repeat this every meal.</span>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 4 — DAILY STRUCTURE</div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px;">KEEP IT SIMPLE</div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+        <div style="display:flex; gap:10px; font-size:14px; color:#ccc; align-items:center;">
+          <span style="color:var(--orange);">→</span> 2–3 meals per day
+        </div>
+        <div style="display:flex; gap:10px; font-size:14px; color:#ccc; align-items:center;">
+          <span style="color:var(--orange);">→</span> Protein shake if short on time
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border); padding-top:12px;">
+        <div style="font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:1px; margin-bottom:8px;">EXAMPLE MEALS</div>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="background:var(--dark); border-radius:8px; padding:10px 12px; font-size:13px; color:var(--white);">🥚 Eggs + fruit</div>
+          <div style="background:var(--dark); border-radius:8px; padding:10px 12px; font-size:13px; color:var(--white);">🍗 Chicken + rice + veggies</div>
+          <div style="background:var(--dark); border-radius:8px; padding:10px 12px; font-size:13px; color:var(--white);">🥩 Steak + potatoes + salad</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 5 — THE RULES THAT ACTUALLY MATTER</div>
+    <div class="card">
+      <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+        <div style="display:flex; gap:10px; font-size:14px; color:var(--white); align-items:flex-start; font-weight:600;">
+          <span style="color:var(--orange); flex-shrink:0;">01</span> Protein first — every meal, every time
+        </div>
+        <div style="display:flex; gap:10px; font-size:14px; color:var(--white); align-items:flex-start; font-weight:600;">
+          <span style="color:var(--orange); flex-shrink:0;">02</span> Drink water before meals
+        </div>
+        <div style="display:flex; gap:10px; font-size:14px; color:var(--white); align-items:flex-start; font-weight:600;">
+          <span style="color:var(--orange); flex-shrink:0;">03</span> Stop mindless snacking
+        </div>
+        <div style="display:flex; gap:10px; font-size:14px; color:var(--white); align-items:flex-start; font-weight:600;">
+          <span style="color:var(--orange); flex-shrink:0;">04</span> Keep meals simple and repeatable
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border); padding-top:12px; font-size:14px; color:var(--orange); font-weight:600; line-height:1.5;">
+        "You don't need variety.<br>You need consistency."
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 6 — THE "NO FALL OFF" RULE</div>
+    <div class="rule-card" style="border-radius:12px;">
+      <h3 style="font-size:22px; margin-bottom:10px;">NEVER SKIP.<br>ALWAYS ADJUST.</h3>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="rule-item">
+          <div class="rule-arrow">→</div>
+          <div>
+            <div class="rule-if">TOO BUSY TO COOK?</div>
+            <div class="rule-then">Protein shake + banana. Done.</div>
+          </div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-arrow">→</div>
+          <div>
+            <div class="rule-if">NO TIME FOR A FULL MEAL?</div>
+            <div class="rule-then">Simple meal beats no meal every time.</div>
+          </div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-arrow">→</div>
+          <div>
+            <div class="rule-if">MISSED ONCE?</div>
+            <div class="rule-then">Next meal, back on the plate method. Move on.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 7 — 3-DAY QUICK WIN</div>
+    <div class="card" style="border-color: var(--orange-dim);">
+      <div class="card-title" style="color:var(--orange); margin-bottom:10px;">YOUR CHALLENGE:<br>3 DAYS. THAT'S IT.</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div class="check-item" onclick="toggleCheck(this)" style="margin:0;">
+          <div class="check-circle">✓</div>
+          <div class="check-num">01</div>
+          <div>
+            <div class="check-text">Use the plate method every meal</div>
+            <div class="check-sub">Protein · Carbs · Fats — repeat</div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" style="margin:0;">
+          <div class="check-circle">✓</div>
+          <div class="check-num">02</div>
+          <div>
+            <div class="check-text">Eat 2–3 meals per day</div>
+            <div class="check-sub">No skipping, no random snacking</div>
+          </div>
+        </div>
+        <div class="check-item" onclick="toggleCheck(this)" style="margin:0;">
+          <div class="check-circle">✓</div>
+          <div class="check-num">03</div>
+          <div>
+            <div class="check-text">Follow the No Fall Off Rule</div>
+            <div class="check-sub">Adjust instead of quitting</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 8 — WHAT TO EXPECT</div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px;">IN THE FIRST FEW DAYS</div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+        <div style="display:flex; gap:10px; font-size:14px; color:#ccc; align-items:center;">
+          <span style="color:var(--green);">✓</span> Less overeating
+        </div>
+        <div style="display:flex; gap:10px; font-size:14px; color:#ccc; align-items:center;">
+          <span style="color:var(--green);">✓</span> Better energy throughout the day
+        </div>
+        <div style="display:flex; gap:10px; font-size:14px; color:#ccc; align-items:center;">
+          <span style="color:var(--green);">✓</span> Less confusion around food
+        </div>
+        <div style="display:flex; gap:10px; font-size:14px; color:#ccc; align-items:center;">
+          <span style="color:var(--green);">✓</span> A system you can actually repeat
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border); padding-top:12px; font-size:13px; color:var(--muted); line-height:1.6;">
+        This isn't about being perfect. It's about being consistent enough to see results over time.
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--orange); letter-spacing:2px; margin-bottom:8px;">SECTION 9 — NEXT STEP</div>
+    <div class="card" style="border-color: var(--orange-dim); background: linear-gradient(135deg, #1a0d00, #111);">
+      <div class="card-title" style="margin-bottom:10px;">THIS IS THE STARTING POINT.</div>
+      <p style="font-size:14px; color:#ccc; line-height:1.65; margin-bottom:14px;">
+        This system works. But to get real results — the kind that actually change how you look and feel — you need more than a framework.
+      </p>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+        <div style="display:flex; gap:10px; font-size:13px; color:#ccc; align-items:center;">
+          <span style="color:var(--orange);">→</span> Nutrition personalized to your schedule
+        </div>
+        <div style="display:flex; gap:10px; font-size:13px; color:#ccc; align-items:center;">
+          <span style="color:var(--orange);">→</span> Structure built around your life
+        </div>
+        <div style="display:flex; gap:10px; font-size:13px; color:#ccc; align-items:center;">
+          <span style="color:var(--orange);">→</span> Accountability so you don't fall off
+        </div>
+      </div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">
+        Keep going through the program. When you're ready to take it further — you know where to find me.
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h3>READY FOR THE FULL SYSTEM?</h3>
+    <p>Full programming, personalized nutrition, and 1-on-1 coaching. Let's build the body.</p>
+    <button class="cta-btn" onclick="window.open('https://instagram.com/willknowsfitness', '_blank')">DM "READY" ON INSTAGRAM →</button>
+  </div>
+
+</div>
+
+<script>
+  const workouts = {
+    gym: {
+      1: {
+        30: [
+          { name: 'Goblet Squat', sets: '4x12' },
+          { name: 'Romanian Deadlift', sets: '4x10' },
+          { name: 'Push-Up', sets: '3x15' },
+          { name: 'Dumbbell Row', sets: '3x12/side' },
+          { name: 'Plank', sets: '3x45s' },
+        ],
+        20: [
+          { name: 'Goblet Squat', sets: '3x12' },
+          { name: 'Romanian Deadlift', sets: '3x10' },
+          { name: 'Push-Up', sets: '3x12' },
+          { name: 'Dumbbell Row', sets: '3x10/side' },
+        ],
+        15: [
+          { name: 'Goblet Squat', sets: '3x10' },
+          { name: 'Push-Up', sets: '3x10' },
+          { name: 'Dumbbell Row', sets: '3x10/side' },
+        ],
+      },
+      2: {
+        30: [
+          { name: 'Reverse Lunge', sets: '4x10/leg' },
+          { name: 'Dumbbell Press', sets: '4x12' },
+          { name: 'Lat Pulldown', sets: '3x12' },
+          { name: 'Lateral Raise', sets: '3x15' },
+          { name: 'Dead Bug', sets: '3x8/side' },
+        ],
+        20: [
+          { name: 'Reverse Lunge', sets: '3x10/leg' },
+          { name: 'Dumbbell Press', sets: '3x12' },
+          { name: 'Lat Pulldown', sets: '3x12' },
+          { name: 'Core Hold', sets: '2x40s' },
+        ],
+        15: [
+          { name: 'Reverse Lunge', sets: '2x10/leg' },
+          { name: 'Dumbbell Press', sets: '3x10' },
+          { name: 'Lat Pulldown', sets: '3x10' },
+        ],
+      },
+      3: {
+        30: [
+          { name: 'Deadlift', sets: '4x8' },
+          { name: 'Incline Push-Up', sets: '4x12' },
+          { name: 'Bent-Over Row', sets: '4x10' },
+          { name: 'Dumbbell Curl', sets: '3x12' },
+          { name: 'Dumbbell Thruster', sets: '3x10' },
+        ],
+        20: [
+          { name: 'Deadlift', sets: '3x8' },
+          { name: 'Incline Push-Up', sets: '3x12' },
+          { name: 'Bent-Over Row', sets: '3x10' },
+          { name: 'Dumbbell Thruster', sets: '2x10' },
+        ],
+        15: [
+          { name: 'Deadlift', sets: '3x6' },
+          { name: 'Bent-Over Row', sets: '3x10' },
+          { name: 'Incline Push-Up', sets: '3x10' },
+        ],
+      },
+    },
+    bodyweight: {
+      1: {
+        30: [
+          { name: 'Bodyweight Squat', sets: '4x15' },
+          { name: 'Hip Hinge (Good Morning)', sets: '4x12' },
+          { name: 'Push-Up', sets: '3x15' },
+          { name: 'Inverted Row (table/bar)', sets: '3x12' },
+          { name: 'Plank', sets: '3x45s' },
+        ],
+        20: [
+          { name: 'Bodyweight Squat', sets: '3x15' },
+          { name: 'Hip Hinge (Good Morning)', sets: '3x12' },
+          { name: 'Push-Up', sets: '3x12' },
+          { name: 'Inverted Row (table/bar)', sets: '3x10' },
+        ],
+        15: [
+          { name: 'Bodyweight Squat', sets: '3x12' },
+          { name: 'Push-Up', sets: '3x10' },
+          { name: 'Hip Hinge (Good Morning)', sets: '3x10' },
+        ],
+      },
+      2: {
+        30: [
+          { name: 'Reverse Lunge', sets: '4x10/leg' },
+          { name: 'Pike Push-Up', sets: '4x12' },
+          { name: 'Superman Hold', sets: '3x10' },
+          { name: 'Lateral Lunge', sets: '3x10/leg' },
+          { name: 'Dead Bug', sets: '3x8/side' },
+        ],
+        20: [
+          { name: 'Reverse Lunge', sets: '3x10/leg' },
+          { name: 'Pike Push-Up', sets: '3x12' },
+          { name: 'Superman Hold', sets: '3x10' },
+          { name: 'Core Hold', sets: '2x40s' },
+        ],
+        15: [
+          { name: 'Reverse Lunge', sets: '2x10/leg' },
+          { name: 'Pike Push-Up', sets: '3x10' },
+          { name: 'Superman Hold', sets: '3x10' },
+        ],
+      },
+      3: {
+        30: [
+          { name: 'Single-Leg Deadlift', sets: '4x8/leg' },
+          { name: 'Decline Push-Up', sets: '4x12' },
+          { name: 'Inverted Row (table/bar)', sets: '4x10' },
+          { name: 'Glute Bridge', sets: '3x15' },
+          { name: 'Mountain Climbers', sets: '3x30s' },
+        ],
+        20: [
+          { name: 'Single-Leg Deadlift', sets: '3x8/leg' },
+          { name: 'Decline Push-Up', sets: '3x12' },
+          { name: 'Inverted Row (table/bar)', sets: '3x10' },
+          { name: 'Glute Bridge', sets: '3x15' },
+        ],
+        15: [
+          { name: 'Single-Leg Deadlift', sets: '3x6/leg' },
+          { name: 'Push-Up', sets: '3x10' },
+          { name: 'Glute Bridge', sets: '3x12' },
+        ],
+      },
+    },
+  };
+
+  const exerciseVideos = {
+    'Goblet Squat':                   { id: '90vbAIwPgc4', cue: 'Hold weight at chest. Squat deep, elbows inside knees. Drive through heels to stand.' },
+    'Romanian Deadlift':              { id: 'WIcpu2UkJoY', cue: 'Hinge at hips, soft knees. Lower weight along legs. Feel the hamstrings stretch, then drive hips forward.' },
+    'Push-Up':                        { id: 'WDIpL0pjun0', cue: 'Hands shoulder-width. Body straight. Lower chest to floor. Press back up, lock out arms.' },
+    'Dumbbell Row':                   { id: '5PoEksoJNaw', cue: 'Brace on bench. Pull dumbbell to hip, elbow back. Squeeze at top. Lower slow.' },
+    'Plank':                          { id: 'pvIjsG5Svck', cue: 'Forearms down, body straight. Squeeze glutes and abs. Do not let hips drop or rise.' },
+    'Reverse Lunge':                  { id: 'xrPteyQLGAo', cue: 'Step back, lower knee to floor. Front shin stays vertical. Drive front heel to stand.' },
+    'Dumbbell Press':                 { id: 'AqzDJHxynwo', cue: 'Lie on bench. Press dumbbells up over chest. Lower slow to sides of chest.' },
+    'Lat Pulldown':                   { id: 'JGeRYIZdojU', cue: 'Grip wide. Pull bar to upper chest. Lean slightly back. Squeeze lats at bottom.' },
+    'Lateral Raise':                  { id: 'XPPfnSEATJA', cue: 'Light weight. Raise arms out to sides to shoulder height. Control the way down.' },
+    'Dead Bug':                       { id: 'jbWmbhElf3Q', cue: 'Lie on back. Arms up, knees 90°. Lower opposite arm and leg. Keep lower back flat.' },
+    'Core Hold':                      { id: '0yPin8hSc8o', cue: 'Forearms down, body perfectly straight. Breathe steady. Hold without breaking form.' },
+    'Deadlift':                       { id: 'AweC3UaM14o', cue: 'Bar over mid-foot. Hinge and grip. Chest up, back flat. Drive floor away. Hips and shoulders rise together.' },
+    'Incline Push-Up':                { id: 'yAbg3_pJKvw', cue: 'Hands on elevated surface. Same as push-up but angle reduces resistance. Great for beginners.' },
+    'Bent-Over Row':                  { id: 'bm0_q9bR_HA', cue: 'Hinge forward 45°. Pull bar or dumbbells to lower chest. Elbows back. Squeeze shoulder blades.' },
+    'Dumbbell Curl':                  { id: 'MtXdEcW3Eog', cue: 'Elbows at sides. Curl up, squeeze at top. Lower slow. No swinging.' },
+    'Dumbbell Thruster':              { id: 'sLIswEpOHng', cue: 'Hold dumbbells at shoulders. Squat down, then drive up and press dumbbells overhead in one fluid motion. Lower back to shoulders.' },
+    'Bodyweight Squat':               { id: 'l83R5PblSMA', cue: 'Feet shoulder-width. Arms out for balance. Squat until thighs parallel. Drive through heels.' },
+    'Hip Hinge (Good Morning)':       { id: 'j858WGrbkcw', cue: 'Arms crossed or hands behind head. Push hips back, hinge forward. Feel hamstrings load. Drive hips forward to stand.' },
+    'Inverted Row (table/bar)':       { id: 'EIFEKZe4Wm8', cue: 'Lie under table or bar. Grip overhand. Pull chest to bar, body straight. Lower with control.' },
+    'Pike Push-Up':                   { id: 'XckEEwa1BPI', cue: 'Hips high, body in V-shape. Lower head toward floor. Press back up. Targets shoulders.' },
+    'Superman Hold':                  { id: 'tYMHYWVvFjs', cue: 'Lie face down. Raise arms and legs off floor simultaneously. Hold. Squeeze glutes and back.' },
+    'Lateral Lunge':                  { id: 'apsp_uuXZTU', cue: 'Step wide to one side. Bend that knee, push hips back. Keep other leg straight. Push back to start.' },
+    'Single-Leg Deadlift':            { id: 'JQZqPsmeesc', cue: 'Balance on one leg. Hinge forward, other leg raises behind. Keep back flat. Return to stand.' },
+    'Decline Push-Up':                { id: 'QBlYp-EwHlo', cue: 'Feet elevated. Hands on floor. Lower chest down. Press back up. Hits upper chest and shoulders.' },
+    'Glute Bridge':                   { id: 'tqp5XQPpTxY', cue: 'Lie on back, feet flat. Drive hips up, squeeze glutes at top. Hold 1 second. Lower slow.' },
+    'Mountain Climbers':              { id: 'kLh-uczlPLg', cue: 'High plank position. Drive knees to chest alternately in a running motion. Keep hips down, core tight. Move fast.' },
+  };
+
+  let currentDay = 1;
+  let currentDur = 30;
+  let currentMode = 'gym';
+  let completedWorkouts = 0;
+  let doneExercises = new Set();
+
+  function selectMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+    renderExercises();
+  }
+
+  function openDemo(name) {
+    const ex = exerciseVideos[name];
+    if (!ex) return;
+    window.open(`https://www.youtube.com/watch?v=${ex.id}`, '_blank');
+  }
+
+  function closeDemo() {
+    document.getElementById('modal-video').src = '';
+    document.getElementById('ex-modal').classList.remove('open');
+  }
+
+  function renderExercises() {
+    const list = workouts[currentMode][currentDay][currentDur];
+    const container = document.getElementById('exercise-list');
+    container.innerHTML = '';
+    doneExercises.clear();
+    document.getElementById('workout-done').style.display = 'none';
+    list.forEach((ex, i) => {
+      const hasVideo = !!exerciseVideos[ex.name];
+      const cue = hasVideo ? exerciseVideos[ex.name].cue : '';
+      const row = document.createElement('div');
+      row.className = 'exercise-row';
+      row.id = `ex-${i}`;
+      row.innerHTML = `
+        <div class="ex-left">
+          <div class="ex-check" onclick="toggleEx(${i})">✓</div>
+          <div style="flex:1;">
+            <div class="ex-name">${ex.name}</div>
+            ${cue ? `<div class="ex-cue">${cue}</div>` : ''}
+            ${hasVideo ? `<div class="ex-demo-btn" onclick="openDemo('${ex.name.replace(/'/g,"\\'")}')">▶ Watch Demo on YouTube</div>` : ''}
+          </div>
+        </div>
+        <div class="ex-sets">${ex.sets}</div>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function toggleEx(i) {
+    const row = document.getElementById(`ex-${i}`);
+    if (row.classList.contains('done')) {
+      row.classList.remove('done');
+      doneExercises.delete(i);
+    } else {
+      row.classList.add('done');
+      doneExercises.add(i);
+    }
+    const total = workouts[currentMode][currentDay][currentDur].length;
+    if (doneExercises.size === total) {
+      document.getElementById('workout-done').style.display = 'block';
+      completedWorkouts = Math.min(completedWorkouts + 1, 3);
+      updateProgress();
+      if (completedWorkouts >= 3) {
+        document.getElementById('win-banner').classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else {
+      document.getElementById('workout-done').style.display = 'none';
+    }
+  }
+
+  function updateProgress() {
+    const pct = Math.round((completedWorkouts / 3) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('pct-display').textContent = pct + '%';
+  }
+
+  function selectDay(d) {
+    currentDay = d;
+    document.querySelectorAll('.day-tab').forEach((t, i) => {
+      t.classList.toggle('active', i + 1 === d);
+    });
+    renderExercises();
+  }
+
+  function selectDur(d) {
+    currentDur = d;
+    document.querySelectorAll('.dur-btn').forEach((b) => {
+      b.classList.toggle('active', parseInt(b.textContent) === d);
+    });
+    selectTier(String(d));
+    renderExercises();
+  }
+
+  function selectTier(t) {
+    ['30', '20', '15'].forEach(id => {
+      document.getElementById('tier-' + id).classList.toggle('active-tier', id === t);
+    });
+    currentDur = parseInt(t);
+    document.querySelectorAll('.dur-btn').forEach((b) => {
+      b.classList.toggle('active', parseInt(b.textContent) === currentDur);
+    });
+    renderExercises();
+  }
+
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+
+  renderExercises();
+</script>
+
+</body>
+</html>
